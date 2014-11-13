@@ -6,9 +6,7 @@ class Game
     @player_2 = Player.new(name2)
     @board = Board.new
     @active_player = 1
-  end
-  
-  def check_for_win
+    @gaming = true
   end
   
   def show_board
@@ -25,12 +23,20 @@ class Game
   end
   
   def turn
-    mark = active_player == 1 ? "X" : "O"
-    move = move_getter
-    @board.add_move_to_board(move, mark)
-    change_who_moves
-    display_who_moves
-    show_board
+    while @gaming
+      mark = active_player == 1 ? "X" : "O"
+      move = move_getter
+      @board.add_move_to_board(move, mark)
+      if @board.game_won?
+        show_board
+        declare_victory
+        @gaming = false
+      else
+      change_who_moves
+      display_who_moves
+      show_board
+      end
+    end
   end
   
   def change_who_moves
@@ -41,6 +47,11 @@ class Game
     end
   end
   
+  def declare_victory
+    name = @active_player == 2 ? @player_2.name : @player_1.name
+    puts "#{name} IS THE WINNER!"
+  end  
+    
   def display_who_moves
     name = @active_player == 2 ? @player_2.name : @player_1.name
     puts "#{name}'s turn."
@@ -91,6 +102,27 @@ class Board
       false
     end
   end
+  
+  def game_won?
+    game_won = false
+    paths_to_victory = [
+    @grid[0..2],
+    @grid[3..5],
+    @grid[6..8],
+    [@grid[0], @grid[4], @grid[8]],
+    [@grid[2], @grid[4], @grid[5]],
+    [@grid[0], @grid[3], @grid[6]],
+    [@grid[1], @grid[4], @grid[7]],
+    [@grid[2], @grid[5], @grid[8]]]
+
+    paths_to_victory.each do |path| 
+      if path.join =~ /XXX|OOO/
+        puts "Winner!"
+        game_won = true
+      end
+    end
+    game_won
+  end
 
 end
 
@@ -109,39 +141,8 @@ class Player
 end
 
 
-newgame = Game.new("Jen", "Ben")
+newgame = Game.new("First Player", "Second Player")
 newgame.show_help
 newgame.show_board
 newgame.turn
-newgame.turn
-newgame.turn
-newgame.turn
-
-# new Game object
-# two new player objects
-# new board object, which is empty
-# new turn
-# player modifies the board object
-# board object checks itself for a win
-# player modifies the board object
-
-# 3 arrays
-# occupied, unoccupied
-# x , o pieces
-# 1, 2, 3
-# 4, 5, 6
-# 7, 8, 9
-# 1, 5, 9
-# 3, 5, 7
-# 1, 4, 7
-# 2, 5, 8
-# 3, 6, 9
-# player 1, player 2
-# board
-# player 1 puts an x in any unoccupied square
-# is it unoccupied? yes. put an x. now it is occupied
-# check if player 1 has 3 x's in a row?
-# player 2 views the board. selects spot for O. is it unoccupied? place O.
-# it is p1's turn again.
-# board... keep track of where x's and o's are placed
 
