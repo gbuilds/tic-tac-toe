@@ -31,10 +31,13 @@ class Game
         show_board
         declare_victory
         @gaming = false
+      elsif @board.game_tied?
+        show_board
+        @gaming = false
       else
-      change_who_moves
-      display_who_moves
-      show_board
+        change_who_moves
+        display_who_moves
+        show_board
       end
     end
   end
@@ -110,7 +113,7 @@ class Board
     @grid[3..5],
     @grid[6..8],
     [@grid[0], @grid[4], @grid[8]],
-    [@grid[2], @grid[4], @grid[5]],
+    [@grid[2], @grid[4], @grid[6]],
     [@grid[0], @grid[3], @grid[6]],
     [@grid[1], @grid[4], @grid[7]],
     [@grid[2], @grid[5], @grid[8]]]
@@ -122,6 +125,15 @@ class Board
       end
     end
     game_won
+  end
+  
+  def game_tied?
+    game_tied = false
+    if @grid.all? {|x| x != "?"}
+      game_tied = true
+      puts "After an intense struggle the game ends in a tie!"
+    end
+    game_tied
   end
 
 end
@@ -145,4 +157,3 @@ newgame = Game.new("First Player", "Second Player")
 newgame.show_help
 newgame.show_board
 newgame.turn
-
